@@ -21,3 +21,10 @@
               (list "hello" "world" "hi"))
 (check-expect (unique (list 11.5 11.5 12 11.5 55 11.5 "done"))
               (list 11.5 12 55 "done"))
+              
+(check-expect (l33t (list "ApplE" "Hello" "irIs"))
+              (list "4ppl3" "H3ll0" "1r1s"))
+(check-expect (l33t (list "What" "is" "Going" "On"))
+              (list "Wh4t" "1s" "G01ng" "0n"))
+(check-expect (l33t (list "aE2iO" "BcDf"))
+              (list "43210" "BcDf"))
