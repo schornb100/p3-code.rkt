@@ -1,15 +1,12 @@
 ; Char List-of-strings -> List-of-strings
 ; consumes a list of strings and a character
 ; returns the same list of words that exclude the words that contain Char
-; #\b | "ben", "hello", "abc", "world" -> "hello", "world"
 (check-expect
  (elim-contains-char #\b (cons "ben" (cons "hello" (cons "abc" (cons "world" '())))))
  (cons "hello" (cons "world" '())))
-; #\w | "who", "what", "where" -> null
 (check-expect
  (elim-contains-char #\w (cons "who" (cons "what" (cons "where" '()))))
  (list))
-; #\A | "apple", "AP", "Alphabet" -> "apple"
 (check-expect
  (elim-contains-char #\A (cons "apple" (cons "AP" (cons "Alphabet" '()))))
  (cons "apple" '()))
@@ -18,28 +15,10 @@
     [(empty? List-of-strings) '()]
     [(not (member Char (string->list (first List-of-strings)))) (cons (first List-of-strings) (elim-contains-char Char (rest List-of-strings)))]
     [else (elim-contains-char Char (rest List-of-strings))]))
-    
-; List-of-chars List-of-chars -> Boolean
-; consumes two lists of chars -- List-of-chars and List-of-chars2
-; results #t if all the elements of the List-of-chars are in List-of-chars2
-(define (same-list? List-of-chars List-of-chars2)
-  (cond
-   [(empty? List-of-chars) #t]
-   [(not (member (first List-of-chars) List-of-chars2)) #f]
-   [else (same-list? (rest List-of-chars) List-of-chars2)]))
 
-; List-of-strings List-of-chars -> List-of-strings
-; consumes a list of strings and a list of chars
-; returns a list of strings where the chars in each only are only from List-of-chars
-(check-expect
- (valid-words (cons "them" (cons "thee" (cons "theme" (cons "hem" '())))) (cons #\t (cons #\h (cons #\e (cons #\m '())))))
- (cons "them" (cons "thee" (cons "theme" (cons "hem" '())))))
-(define (valid-words List-of-strings List-of-chars)
-  (cond
-    [(empty? List-of-strings) '()]
-    [(same-list? List-of-chars (string->list (first List-of-strings))) (cons (first List-of-strings) (valid-words (rest List-of-strings) List-of-chars))]
-    [else (valid-words (rest List-of-strings) List-of-chars)]))
-   
+
+
+
 ; Any List-of-any -> List-of-any
 ; consumes a given value Any and a list of values
 ; deletes all instances of Any in the list
@@ -100,19 +79,19 @@
   (cond
     [(empty? List-of-strings) '()]
     [else (cons (list->string (leet (string->list (first List-of-strings)))) (l33t (rest List-of-strings)))]))
-    
+
+
+
+
 ; List-of-chars -> List-of-chars
 ; consumes a list of chars
-; returns a modified list of chars where all the vowels (A, a, E, E, I, i, O, o, U, U) have been deleted
-; A, i, U -> ""
+; returns modified list of chars where all the vowels are deleted
 (check-expect
  (no-vowel (cons #\A (cons #\i (cons #\U '()))))
  (list))
-; B, Z, R -> B, Z, R
 (check-expect
  (no-vowel (cons #\B (cons #\Z (cons #\R '()))))
  (cons #\B (cons #\Z (cons #\R '()))))
-; "A, B, O, e, C -> B, C
 (check-expect
  (no-vowel (cons #\A (cons #\B (cons #\O (cons #\e (cons #\C '()))))))
  (cons #\B (cons #\C '())))
@@ -122,23 +101,15 @@
     [(member (first List-of-chars) (cons #\a (cons #\A (cons #\e (cons #\E (cons #\i (cons #\I (cons #\o (cons #\O (cons #\u (cons #\U '()))))))))))) (no-vowel (rest List-of-chars))]
     [else (cons (first List-of-chars) (no-vowel (rest List-of-chars)))]))
 
-
 ; List-of-strings -> List-of-strings
 ; consumes a list of strings
 ; returns the last list of strings but all the vowel in each string are deleted
-; "apple", "hEllo", "irIs" -> "ppl", "hll", "rs"
 (check-expect
  (strip-vowels (cons "apple" (cons "hEllo" (cons "irIs" '()))))
  (cons "ppl" (cons "hll" (cons "rs" '()))))
-; "aAa", "bBb", "vOwEls" -> "", "bBB", "vwls" 
 (check-expect
  (strip-vowels (cons "aAa" (cons "bBb" (cons "vOwEls" '()))))
  (cons "" (cons "bBb" (cons "vwls" '()))))
-; "HolU", "WouldA" -> "Hl", "Wld" 
 (check-expect
  (strip-vowels (cons "HolU" (cons "WouldA" '())))
  (cons "Hl" (cons "Wld" '())))
-(define (strip-vowels List-of-strings)
-  (cond
-    [(empty? List-of-strings) '()]
-    [else (cons (list->string (no-vowel (string->list (first List-of-strings)))) (strip-vowels (rest List-of-strings)))]))
