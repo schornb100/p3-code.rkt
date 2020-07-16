@@ -142,30 +142,31 @@
 ; List-of-chars -> List-of-chars
 ; consumes a list of chars
 ; returns modified list of chars where all the vowels are deleted
-(check-expect
- (no-vowel (cons #\A (cons #\i (cons #\U '()))))
- (list))
-(check-expect
- (no-vowel (cons #\B (cons #\Z (cons #\R '()))))
- (cons #\B (cons #\Z (cons #\R '()))))
-(check-expect
- (no-vowel (cons #\A (cons #\B (cons #\O (cons #\e (cons #\C '()))))))
- (cons #\B (cons #\C '())))
-(define (no-vowel List-of-chars)
+(check-expect (no-vowel (list #\A #\i #\U))
+              (list))
+(check-expect (no-vowel (list #\B #\Z #\R))
+              (list #\B #\Z #\R))
+(check-expect (no-vowel (list #\A #\B #\O #\e #\C))
+              (list #\B #\C))
+(define (no-vowel aloc)
   (cond
-    [(empty? List-of-chars) '()]
-    [(member (first List-of-chars) (cons #\a (cons #\A (cons #\e (cons #\E (cons #\i (cons #\I (cons #\o (cons #\O (cons #\u (cons #\U '()))))))))))) (no-vowel (rest List-of-chars))]
-    [else (cons (first List-of-chars) (no-vowel (rest List-of-chars)))]))
+    [(empty? aloc) '()]
+    [(member (first aloc) (list #\a #\A #\e #\E #\i #\I #\o #\O #\u #\U))
+      (no-vowel (rest aloc))]
+    [else (cons (first aloc) (no-vowel (rest aloc)))]))
 
 ; List-of-strings -> List-of-strings
 ; consumes a list of strings
-; returns the last list of strings but all the vowel in each string are deleted
-(check-expect
- (strip-vowels (cons "apple" (cons "hEllo" (cons "irIs" '()))))
- (cons "ppl" (cons "hll" (cons "rs" '()))))
-(check-expect
- (strip-vowels (cons "aAa" (cons "bBb" (cons "vOwEls" '()))))
- (cons "" (cons "bBb" (cons "vwls" '()))))
-(check-expect
- (strip-vowels (cons "HolU" (cons "WouldA" '())))
- (cons "Hl" (cons "Wld" '())))
+; returns modified alos where the vowels in each string are deleted
+(check-expect (strip-vowels (list "apple" "hEllo" "irIs"))
+              (list "ppl" "hll" "rs"))
+(check-expect (strip-vowels (list "aAa" "bBb" "vOwEls"))
+              (list "" "bBb" "vwls"))
+(check-expect (strip-vowels (list "HolU" "WouldA"))
+              (list "Hl" "Wld"))
+(define (strip-vowels alos)
+  (cond
+    [(empty? alos) '()]
+    [else
+      (cons (list->string (no-vowel (string->list (first alos))))
+        (strip-vowels (rest alos)))]))
