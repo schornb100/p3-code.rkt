@@ -134,7 +134,7 @@
     [(empty? List-of-strings) '()]
     [else
       (cons (list->string (leet (string->list (first List-of-strings))))
-      (l33t (rest List-of-strings)))]))
+        (l33t (rest List-of-strings)))]))
 
 
 
