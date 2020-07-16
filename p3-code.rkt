@@ -7,12 +7,16 @@
               (list))
 (check-expect (elim-contains-char #\A (list "apple" "AP" "Alphabet"))
               (list "apple"))
-(define (elim-contains-char Char List-of-strings)
+(check-expect (elim-contains-char #\r (list "no" "yes" "maybe"))
+              (list "no" "yes" "maybe"))
+(check-expect (elim-contains-char #\A (list))
+              (list))
+(define (elim-contains-char Char alos)
   (cond
-    [(empty? List-of-strings) '()]
-    [(not (member Char (string->list (first List-of-strings))))
-      (cons (first List-of-strings) (elim-contains-char Char (rest List-of-strings)))]
-    [else (elim-contains-char Char (rest List-of-strings))]))
+    [(empty? alos) '()]
+    [(not (member Char (string->list (first alos))))
+      (cons (first alos) (elim-contains-char Char (rest alos)))]
+    [else (elim-contains-char Char (rest alos))]))
 
 
 
@@ -29,11 +33,11 @@
 (check-expect (same-list?
               (list #\H #\I) (list #\H #\i))
               #f)
-(define (same-list? List-of-chars List-of-chars2)
+(define (same-list? aloc aloc2)
   (cond
-   [(empty? List-of-chars) #t]
-   [(not (member (first List-of-chars) List-of-chars2)) #f]
-   [else (same-list? (rest List-of-chars) List-of-chars2)]))
+   [(empty? aloc) #t]
+   [(not (member (first aloc) aloc2)) #f]
+   [else (same-list? (rest aloc) aloc2)]))
 
 ; List-of-strings List-of-chars -> List-of-strings
 ; consumes a list of strings and a list of chars
@@ -47,13 +51,19 @@
 (check-expect (valid-words
               (list "CHI" "rice" "RICH" "CHIN") (list #\R #\I #\C #\H #\E))
               (list "CHI" "RICH"))
-(define (valid-words List-of-strings List-of-chars)
+(check-expect (valid-words
+              (list "hello" "world") (list #\a))
+              (list))
+(check-expect (valid-words
+              (list) (list))
+              (list))
+(define (valid-words alos aloc)
   (cond
-    [(empty? List-of-strings) '()]
-    [(same-list? (string->list (first List-of-strings)) List-of-chars)
-      (cons (first List-of-strings)
-        (valid-words (rest List-of-strings) List-of-chars))]
-    [else (valid-words (rest List-of-strings) List-of-chars)]))
+    [(empty? alos) '()]
+    [(same-list? (string->list (first alos)) aloc)
+      (cons (first alos)
+        (valid-words (rest alos) aloc))]
+    [else (valid-words (rest alos) aloc)]))
     
     
     
@@ -64,11 +74,13 @@
               (list 11 12 13))
 (check-expect (delete-all "hi" (list "hello" "hola" "ih"))
               (list "hello" "hola" "ih"))
-(define (delete-all Any List-of-any)
+(check-expect (delete-all 11.5 (list 11.5 11.5 11.5 11.5))
+              (list))
+(define (delete-all Any aloa)
   (cond
-    [(empty? List-of-any) '()]
-    [(equal? (first List-of-any) Any) (delete-all Any (rest List-of-any))]
-    [else (cons (first List-of-any) (delete-all Any (rest List-of-any)))]))
+    [(empty? aloa) '()]
+    [(equal? (first aloa) Any) (delete-all Any (rest aloa))]
+    [else (cons (first aloa) (delete-all Any (rest aloa)))]))
 
 ; List-of-any -> List-of-any
 ; consumes a list of values
@@ -77,15 +89,19 @@
               (list 10 11 12 13))
 (check-expect (unique (list "hello" "world" "hi"))
               (list "hello" "world" "hi"))
-(check-expect (unique (list 11.5 11.5 12 11.5 55 11.5 "done"))
-              (list 11.5 12 55 "done"))
-(define (unique List-of-any)
+(check-expect (unique (list 11.5 11.5 11.5 11.5))
+              (list 11.5))
+(check-expect (unique (list #\A #\a #\A))
+              (list #\A #\a))
+(check-expect (unique (list))
+              (list))
+(define (unique aloa)
   (cond
-    [(empty? List-of-any) '()]
-    [(member (first List-of-any) (rest List-of-any))
-      (cons (first List-of-any)
-        (unique (delete-all (first List-of-any) (rest List-of-any))))]
-    [else (cons (first List-of-any) (unique (rest List-of-any)))]))
+    [(empty? aloa) '()]
+    [(member (first aloa) (rest aloa))
+      (cons (first aloa)
+        (unique (delete-all (first aloa) (rest aloa))))]
+    [else (cons (first aloa) (unique (rest aloa)))]))
     
 
 
@@ -102,22 +118,22 @@
               (list #\b #\C #\d))
 (check-expect (leet (list #\A #\e #\i #\O #\u))
               (list #\4 #\3 #\1 #\0 #\u))
-(define (leet List-of-chars)
+(define (leet aloc)
   (cond
-    [(empty? List-of-chars) '()]
-    [(or (equal? #\A (first List-of-chars))
-         (equal? #\a (first List-of-chars)))
-           (cons #\4 (leet (rest List-of-chars)))]
-    [(or (equal? #\E (first List-of-chars))
-         (equal? #\e (first List-of-chars)))
-           (cons #\3 (leet (rest List-of-chars)))]
-    [(or (equal? #\I (first List-of-chars))
-         (equal? #\i (first List-of-chars)))
-           (cons #\1 (leet (rest List-of-chars)))]
-    [(or (equal? #\O (first List-of-chars))
-         (equal? #\o (first List-of-chars)))
-           (cons #\0 (leet (rest List-of-chars)))]
-    [else (cons (first List-of-chars) (leet (rest List-of-chars)))]))
+    [(empty? aloc) '()]
+    [(or (equal? #\A (first aloc))
+         (equal? #\a (first aloc)))
+           (cons #\4 (leet (rest aloc)))]
+    [(or (equal? #\E (first aloc))
+         (equal? #\e (first aloc)))
+           (cons #\3 (leet (rest aloc)))]
+    [(or (equal? #\I (first aloc))
+         (equal? #\i (first aloc)))
+           (cons #\1 (leet (rest aloc)))]
+    [(or (equal? #\O (first aloc))
+         (equal? #\o (first aloc)))
+           (cons #\0 (leet (rest aloc)))]
+    [else (cons (first aloc) (leet (rest aloc)))]))
 
 ; List-of-strings -> List-of-strings
 ; consumes a list of strings
@@ -129,13 +145,16 @@
               (list "Wh4t" "1s" "G01ng" "0n"))
 (check-expect (l33t (list "aE2iO" "BcDf"))
               (list "43210" "BcDf"))
-(define (l33t List-of-strings)
+(check-expect (l33t (list "Aeiou"))
+              (list "4310u"))
+(check-expect (l33t (list))
+              (list))
+(define (l33t alos)
   (cond
-    [(empty? List-of-strings) '()]
+    [(empty? alos) '()]
     [else
-      (cons (list->string (leet (string->list (first List-of-strings))))
-        (l33t (rest List-of-strings)))]))
-
+      (cons (list->string (leet (string->list (first alos))))
+        (l33t (rest alos)))]))
 
 
 
@@ -164,6 +183,10 @@
               (list "" "bBb" "vwls"))
 (check-expect (strip-vowels (list "HolU" "WouldA"))
               (list "Hl" "Wld"))
+(check-expect (strip-vowels (list "AEIOU"))
+              (list ""))
+(check-expect (strip-vowels (list))
+              (list))     
 (define (strip-vowels alos)
   (cond
     [(empty? alos) '()]
