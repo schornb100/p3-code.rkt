@@ -96,24 +96,45 @@
 ; it turns #\E and #\e into #\3
 ; it turns #\I and #\i into #\1
 ; it turns #\O and #\o into #\0
+(check-expect (leet (list #\h #\e #\l #\l #\o))
+              (list #\h #\3 #\l #\l #\0))
+(check-expect (leet (list #\b #\C #\d))
+              (list #\b #\C #\d))
+(check-expect (leet (list #\A #\e #\i #\O #\u))
+              (list #\4 #\3 #\1 #\0 #\u))
 (define (leet List-of-chars)
   (cond
     [(empty? List-of-chars) '()]
-    [(or (equal? #\A (first List-of-chars)) (equal? #\a (first List-of-chars))) (cons #\4 (leet (rest List-of-chars)))]
-    [(or (equal? #\E (first List-of-chars)) (equal? #\e (first List-of-chars))) (cons #\3 (leet (rest List-of-chars)))]
-    [(or (equal? #\I (first List-of-chars)) (equal? #\i (first List-of-chars))) (cons #\1 (leet (rest List-of-chars)))]
-    [(or (equal? #\O (first List-of-chars)) (equal? #\o (first List-of-chars))) (cons #\0 (leet (rest List-of-chars)))]
+    [(or (equal? #\A (first List-of-chars))
+         (equal? #\a (first List-of-chars)))
+           (cons #\4 (leet (rest List-of-chars)))]
+    [(or (equal? #\E (first List-of-chars))
+         (equal? #\e (first List-of-chars)))
+           (cons #\3 (leet (rest List-of-chars)))]
+    [(or (equal? #\I (first List-of-chars))
+         (equal? #\i (first List-of-chars)))
+           (cons #\1 (leet (rest List-of-chars)))]
+    [(or (equal? #\O (first List-of-chars))
+         (equal? #\o (first List-of-chars)))
+           (cons #\0 (leet (rest List-of-chars)))]
     [else (cons (first List-of-chars) (leet (rest List-of-chars)))]))
 
+; List-of-strings -> List-of-strings
 ; consumes a list of strings
-; performs the helper function 'leet' on each string and returns the motified list
-(check-expect
- (l33t (cons "ApplE" (cons "Hello" (cons "irIs" '()))))
- (cons "4ppl3" (cons "H3ll0" (cons "1r1s" '()))))
+; performs the helper function 'leet' on each string
+; returns the motified list
+(check-expect (l33t (list "ApplE" "Hello" "irIs"))
+              (list "4ppl3" "H3ll0" "1r1s"))
+(check-expect (l33t (list "What" "is" "Going" "On"))
+              (list "Wh4t" "1s" "G01ng" "0n"))
+(check-expect (l33t (list "aE2iO" "BcDf"))
+              (list "43210" "BcDf"))
 (define (l33t List-of-strings)
   (cond
     [(empty? List-of-strings) '()]
-    [else (cons (list->string (leet (string->list (first List-of-strings)))) (l33t (rest List-of-strings)))]))
+    [else
+      (cons (list->string (leet (string->list (first List-of-strings))))
+      (l33t (rest List-of-strings)))]))
 
 
 
