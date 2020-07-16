@@ -1,34 +1,34 @@
 ; Char List-of-strings -> List-of-strings
 ; consumes a list of strings and a character
 ; returns the same list of words that exclude the words that contain Char
-(check-expect
- (elim-contains-char #\b (cons "ben" (cons "hello" (cons "abc" (cons "world" '())))))
- (cons "hello" (cons "world" '())))
-(check-expect
- (elim-contains-char #\w (cons "who" (cons "what" (cons "where" '()))))
- (list))
-(check-expect
- (elim-contains-char #\A (cons "apple" (cons "AP" (cons "Alphabet" '()))))
- (cons "apple" '()))
+(check-expect (elim-contains-char #\b (list "ben" "hello" "abc" "world"))
+              (list "hello" "world"))
+(check-expect (elim-contains-char #\w (list "who" "what" "where" ))
+              (list))
+(check-expect (elim-contains-char #\A (list "apple" "AP" "Alphabet"))
+              (list "apple"))
 (define (elim-contains-char Char List-of-strings)
   (cond
     [(empty? List-of-strings) '()]
-    [(not (member Char (string->list (first List-of-strings)))) (cons (first List-of-strings) (elim-contains-char Char (rest List-of-strings)))]
+    [(not (member Char (string->list (first List-of-strings))))
+      (cons (first List-of-strings) (elim-contains-char Char (rest List-of-strings)))]
     [else (elim-contains-char Char (rest List-of-strings))]))
+
+
 
 ; List-of-chars List-of-chars -> Boolean
 ; consumes two lists of chars -- List-of-chars and List-of-chars2
-; results #t if all the elements of the List-of-chars are in List-of-chars2
+; returns #t if all elements in List-of-chars are in List-of-chars2
 ; returns #f otherwise
-(check-expect
- (same-list? (list #\t #\h #\e #\e) (list #\t #\h #\e #\m))
- #t)
-(check-expect
- (same-list? (list #\h #\e #\l #\l #\o) (list #\h #\a  #\l #\o))
- #f)
-(check-expect
- (same-list? (list #\H #\I) (list #\H #\i))
- #f)
+(check-expect (same-list?
+              (list #\t #\h #\e #\e) (list #\t #\h #\e #\m))
+              #t)
+(check-expect (same-list?
+              (list #\h #\e #\l #\l #\o) (list #\h #\a  #\l #\o))
+              #f)
+(check-expect (same-list?
+              (list #\H #\I) (list #\H #\i))
+              #f)
 (define (same-list? List-of-chars List-of-chars2)
   (cond
    [(empty? List-of-chars) #t]
@@ -38,30 +38,32 @@
 ; List-of-strings List-of-chars -> List-of-strings
 ; consumes a list of strings and a list of chars
 ; returns words from List-of-string that only contains chars from List-of-chars
-(check-expect
- (valid-words (list "them" "thee" "theme" "hem") (list #\t #\h #\e #\m '()))
- (list "them" "thee" "theme" "hem"))
-(check-expect
- (valid-words (list "olga" "germ" "hello" "ogre" "shrek") (list #\e #\g #\o #\m #\r))
- (list "germ" "ogre"))
-(check-expect
- (valid-words (list "CHI" "rice" "RICH" "CHIN") (list #\R #\I #\C #\H #\E))
- (list "CHI" "RICH"))
+(check-expect (valid-words
+              (list "them" "thee" "theme" "hem") (list #\t #\h #\e #\m))
+              (list "them" "thee" "theme" "hem"))
+(check-expect (valid-words
+              (list "olga" "germ" "hello" "ogre" "shrek") (list #\e #\g #\o #\m #\r))
+              (list "germ" "ogre"))
+(check-expect (valid-words
+              (list "CHI" "rice" "RICH" "CHIN") (list #\R #\I #\C #\H #\E))
+              (list "CHI" "RICH"))
 (define (valid-words List-of-strings List-of-chars)
   (cond
     [(empty? List-of-strings) '()]
-    [(same-list? (string->list (first List-of-strings)) List-of-chars) (cons (first List-of-strings) (valid-words (rest List-of-strings) List-of-chars))]
+    [(same-list? (string->list (first List-of-strings)) List-of-chars)
+      (cons (first List-of-strings)
+        (valid-words (rest List-of-strings) List-of-chars))]
     [else (valid-words (rest List-of-strings) List-of-chars)]))
-
+    
+    
+    
 ; Any List-of-any -> List-of-any
 ; consumes a given value Any and a list of values
 ; deletes all instances of Any in the list
-(check-expect
- (delete-all 10 (cons 10 (cons 11 (cons 12 (cons 13 (cons 10 '()))))))
- (cons 11 (cons 12 (cons 13 '()))))
-(check-expect
- (delete-all "hi" (cons "hello" (cons "hola" (cons "ih" '()))))
- (cons "hello" (cons "hola" (cons "ih" '()))))
+(check-expect (delete-all 10 (list 10 11 12 13 10))
+              (list 11 12 13))
+(check-expect (delete-all "hi" (list "hello" "hola" "ih"))
+              (list "hello" "hola" "ih"))
 (define (delete-all Any List-of-any)
   (cond
     [(empty? List-of-any) '()]
@@ -71,19 +73,18 @@
 ; List-of-any -> List-of-any
 ; consumes a list of values
 ; returns a list of the same values without duplicates
-(check-expect
- (unique (cons 10 (cons 11 (cons 12 (cons 13 (cons 10 '()))))))
- (cons 10 (cons 11 (cons 12 (cons 13 '())))))
-(check-expect
- (unique (cons "hello" (cons "world" (cons "hi" '()))))
- (cons "hello" (cons "world" (cons "hi" '()))))
-(check-expect
- (unique (cons 11.5 (cons 11.5 (cons 12 (cons 11.5 (cons 55 (cons 11.5 (cons "done" '()))))))))
- (cons 11.5 (cons 12 (cons 55 (cons "done" '())))))
+(check-expect (unique (list 10 11 12 13 10))
+              (list 10 11 12 13))
+(check-expect (unique (list "hello" "world" "hi"))
+              (list "hello" "world" "hi"))
+(check-expect (unique (list 11.5 11.5 12 11.5 55 11.5 "done"))
+              (list 11.5 12 55 "done"))
 (define (unique List-of-any)
   (cond
     [(empty? List-of-any) '()]
-    [(member (first List-of-any) (rest List-of-any)) (cons (first List-of-any) (unique (delete-all (first List-of-any) (rest List-of-any))))]
+    [(member (first List-of-any) (rest List-of-any))
+      (cons (first List-of-any)
+        (unique (delete-all (first List-of-any) (rest List-of-any))))]
     [else (cons (first List-of-any) (unique (rest List-of-any)))]))
     
 
