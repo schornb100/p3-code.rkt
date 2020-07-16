@@ -16,8 +16,42 @@
     [(not (member Char (string->list (first List-of-strings)))) (cons (first List-of-strings) (elim-contains-char Char (rest List-of-strings)))]
     [else (elim-contains-char Char (rest List-of-strings))]))
 
+; List-of-chars List-of-chars -> Boolean
+; consumes two lists of chars -- List-of-chars and List-of-chars2
+; results #t if all the elements of the List-of-chars are in List-of-chars2
+; returns #f otherwise
+(check-expect
+ (same-list? (list #\t #\h #\e #\e) (list #\t #\h #\e #\m))
+ #t)
+(check-expect
+ (same-list? (list #\h #\e #\l #\l #\o) (list #\h #\a  #\l #\o))
+ #f)
+(check-expect
+ (same-list? (list #\H #\I) (list #\H #\i))
+ #f)
+(define (same-list? List-of-chars List-of-chars2)
+  (cond
+   [(empty? List-of-chars) #t]
+   [(not (member (first List-of-chars) List-of-chars2)) #f]
+   [else (same-list? (rest List-of-chars) List-of-chars2)]))
 
-
+; List-of-strings List-of-chars -> List-of-strings
+; consumes a list of strings and a list of chars
+; returns words from List-of-string that only contains chars from List-of-chars
+(check-expect
+ (valid-words (list "them" "thee" "theme" "hem") (list #\t #\h #\e #\m '()))
+ (list "them" "thee" "theme" "hem"))
+(check-expect
+ (valid-words (list "olga" "germ" "hello" "ogre" "shrek") (list #\e #\g #\o #\m #\r))
+ (list "germ" "ogre"))
+(check-expect
+ (valid-words (list "CHI" "rice" "RICH" "CHIN") (list #\R #\I #\C #\H #\E))
+ (list "CHI" "RICH"))
+(define (valid-words List-of-strings List-of-chars)
+  (cond
+    [(empty? List-of-strings) '()]
+    [(same-list? (string->list (first List-of-strings)) List-of-chars) (cons (first List-of-strings) (valid-words (rest List-of-strings) List-of-chars))]
+    [else (valid-words (rest List-of-strings) List-of-chars)]))
 
 ; Any List-of-any -> List-of-any
 ; consumes a given value Any and a list of values
